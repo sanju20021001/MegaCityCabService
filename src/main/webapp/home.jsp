@@ -108,29 +108,29 @@
 
     <section class="available-cars text-center">
         <div class="container">
-            <h1>Available Cars</h1>
+            <h1>Available Vehicles</h1>
             <div class="row">
                 <div class="col-md-4">
                     <div class="car-card">
                         <i class="fas fa-car"></i>
-                        <h3>Economy Sedan</h3>
+                        <h3>Cars for Every Journey</h3>
                         <p>Comfortable and budget-friendly travel.</p>
                         <a href="bookingride.jsp" class="btn">Book Now</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="car-card">
-                        <i class="fas fa-suv"></i>
-                        <h3>Luxury SUV</h3>
-                        <p>Spacious and premium rides for families.</p>
+                        <i class="fas fa-taxi"></i>
+                        <h3>Cabs for Quick Trips</h3>
+                        <p>Spacious and premium quick rides.</p>
                         <a href="bookingride.jsp" class="btn">Book Now</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="car-card">
-                        <i class="fas fa-car-side"></i>
-                        <h3>Luxury Sedan</h3>
-                        <p>Elegant rides for special occasions.</p>
+                        <i class="fas fa-shuttle-van"></i>
+                        <h3>Vans for Group Travel</h3>
+                        <p>Elegant rides for family & Freiends.</p>
                         <a href="bookingride.jsp" class="btn">Book Now</a>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
     
     <section class="features text-center">
         <div class="container">
-            <h1>Customer Dashboard Features</h1>
+            <h1>Customer Dashboard</h1>
             <div class="row">
                 <div class="col-md-4">
                     <div class="feature-card">

@@ -23,7 +23,7 @@ public class AdminController extends HttpServlet {
         try (Connection connection = DatabaseConnection.getConnection()) {
             AdminDAO adminDAO = new AdminDAO(connection);
 
-            // Get total counts
+            // Get total counts new
             int totalUsers = adminDAO.getTotalUsers();
             int totalCars = adminDAO.getTotalCars();
             int totalBookings = adminDAO.getTotalBookings();
