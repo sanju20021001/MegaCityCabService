@@ -1,109 +1,130 @@
 package com.datapackage.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import com.datapackage.models.Booking;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datapackage.models.Booking;
-
 public class BookingDAO {
+    private Connection conn;
 
-    public boolean bookCab(Booking booking) {
-        String sql = "INSERT INTO bookings (user_id, customer_name, customer_phone, customer_email, pickup_location, drop_location, pickup_time, cab_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // Constructor to initialize the database connection
+    public BookingDAO() throws SQLException {
+        this.conn = DatabaseConnection.getConnection();
+    }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    // Insert a new booking into the database
+    public boolean insertBooking(Booking booking) {
+        String sql = "INSERT INTO booking (customer_name, customer_phone, customer_email, pickup_location, drop_location, pickup_time, cab_type, driver_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, booking.getCustomerName());
+            stmt.setString(2, booking.getCustomerPhone());
+            stmt.setString(3, booking.getCustomerEmail());
+            stmt.setString(4, booking.getPickupLocation());
+            stmt.setString(5, booking.getDropLocation());
 
-            pstmt.setInt(1, booking.getUserId());
-            pstmt.setString(2, booking.getCustomerName());
-            pstmt.setString(3, booking.getCustomerPhone());
-            pstmt.setString(4, booking.getCustomerEmail());
-            pstmt.setString(5, booking.getPickupLocation());
-            pstmt.setString(6, booking.getDropLocation());
-            pstmt.setTimestamp(7, Timestamp.valueOf(booking.getPickupTime()));
-            pstmt.setString(8, booking.getCabType());
+            // Convert LocalDateTime to Timestamp for database storage
+            if (booking.getPickupTime() != null) {
+                stmt.setTimestamp(6, Timestamp.valueOf(booking.getPickupTime()));
+            } else {
+                stmt.setTimestamp(6, null);
+            }
 
-            int rowsInserted = pstmt.executeUpdate();
-            return rowsInserted > 0;
+            stmt.setString(7, booking.getCabType());
+            stmt.setString(8, booking.getDriverName());
 
+            // Execute the query and return true if successful
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Log the exception and return false
+            System.err.println("Error inserting booking: " + e.getMessage());
             return false;
         }
     }
 
+    // Fetch all bookings from the database
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings";
+        String sql = "SELECT * FROM booking ORDER BY pickup_time DESC";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setBookingId(rs.getInt("booking_id"));
-                booking.setUserId(rs.getInt("user_id"));
-                booking.setCustomerName(rs.getString("customer_name"));
-                booking.setCustomerPhone(rs.getString("customer_phone"));
-                booking.setCustomerEmail(rs.getString("customer_email"));
-                booking.setPickupLocation(rs.getString("pickup_location"));
-                booking.setDropLocation(rs.getString("drop_location"));
-                booking.setPickupTime(rs.getTimestamp("pickup_time").toLocalDateTime());
-                booking.setCabType(rs.getString("cab_type"));
-
+                Booking booking = new Booking(
+                        rs.getInt("booking_id"),
+                        rs.getString("customer_name"),
+                        rs.getString("customer_phone"),
+                        rs.getString("customer_email"),
+                        rs.getString("pickup_location"),
+                        rs.getString("drop_location"),
+                        rs.getTimestamp("pickup_time") != null ? rs.getTimestamp("pickup_time").toLocalDateTime() : null,
+                        rs.getString("cab_type"),
+                        rs.getString("driver_name")
+                );
                 bookings.add(booking);
             }
+            System.out.println("Total Bookings Retrieved: " + bookings.size());  // Debugging line
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Log the exception
+            System.err.println("Error retrieving bookings: " + e.getMessage());
         }
-
         return bookings;
     }
 
-    public boolean updateBooking(int bookingId, Booking booking) {
-        String sql = "UPDATE bookings SET user_id=?, customer_name=?, customer_phone=?, customer_email=?, pickup_location=?, drop_location=?, pickup_time=?, cab_type=? WHERE booking_id=?";
+    // Update a booking in the database
+    public boolean updateBooking(Booking booking) {
+        String sql = "UPDATE booking SET customer_name = ?, customer_phone = ?, customer_email = ?, pickup_location = ?, drop_location = ?, pickup_time = ?, cab_type = ?, driver_name = ? WHERE booking_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, booking.getCustomerName());
+            stmt.setString(2, booking.getCustomerPhone());
+            stmt.setString(3, booking.getCustomerEmail());
+            stmt.setString(4, booking.getPickupLocation());
+            stmt.setString(5, booking.getDropLocation());
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Convert LocalDateTime to Timestamp for database storage
+            if (booking.getPickupTime() != null) {
+                stmt.setTimestamp(6, Timestamp.valueOf(booking.getPickupTime()));
+            } else {
+                stmt.setTimestamp(6, null);
+            }
 
-            pstmt.setInt(1, booking.getUserId());
-            pstmt.setString(2, booking.getCustomerName());
-            pstmt.setString(3, booking.getCustomerPhone());
-            pstmt.setString(4, booking.getCustomerEmail());
-            pstmt.setString(5, booking.getPickupLocation());
-            pstmt.setString(6, booking.getDropLocation());
-            pstmt.setTimestamp(7, Timestamp.valueOf(booking.getPickupTime()));
-            pstmt.setString(8, booking.getCabType());
-            pstmt.setInt(9, bookingId);
+            stmt.setString(7, booking.getCabType());
+            stmt.setString(8, booking.getDriverName());
+            stmt.setInt(9, booking.getBookingId());
 
-            int rowsUpdated = pstmt.executeUpdate();
-            return rowsUpdated > 0;
-
+            // Execute the query and return true if successful
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Log the exception and return false
+            System.err.println("Error updating booking: " + e.getMessage());
             return false;
         }
     }
 
+    // Delete a booking from the database
     public boolean deleteBooking(int bookingId) {
-        String sql = "DELETE FROM bookings WHERE booking_id=?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, bookingId);
-            int rowsDeleted = pstmt.executeUpdate();
-            return rowsDeleted > 0;
-
+        String sql = "DELETE FROM booking WHERE booking_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bookingId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Log the exception and return false
+            System.err.println("Error deleting booking: " + e.getMessage());
             return false;
+        }
+    }
+
+    // Close the database connection
+    public void closeConnection() {
+        if (conn != null) {
+            try {
+                conn.close();
+                System.out.println("Database connection closed.");
+            } catch (SQLException e) {
+                System.err.println("Error closing database connection: " + e.getMessage());
+            }
         }
     }
 }

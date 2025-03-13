@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/admindashboard")
@@ -47,7 +48,7 @@ public class AdminController extends HttpServlet {
                     manageCars(request, response);
                     break;
                 case "manageBookings":
-                    manageBookings(request, response);
+                    
                     break;
                 default:
                     showDashboard(request, response);
@@ -77,10 +78,5 @@ public class AdminController extends HttpServlet {
         request.getRequestDispatcher("/admindashboard.jsp").forward(request, response);
     }
 
-    private void manageBookings(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BookingDAO bookingDAO = new BookingDAO();
-        List<Booking> bookings = bookingDAO.getAllBookings();
-        request.setAttribute("bookings", bookings);
-        request.getRequestDispatcher("/admindashboard.jsp").forward(request, response);
-    }
+
 }
