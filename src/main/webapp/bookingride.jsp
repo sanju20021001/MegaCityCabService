@@ -103,26 +103,14 @@
                 <label for="pickupTime" class="form-label">Pickup Time</label>
                 <input type="datetime-local" class="form-control" id="pickupTime" name="pickupTime" required>
             </div>
-             <div class="mb-3">
-                <label class="form-label">Driver Option</label>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="driverOption" id="withDriver" value="With Driver" checked>
-                        <label class="form-check-label" for="withDriver">With Driver</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="driverOption" id="withoutDriver" value="Without Driver">
-                        <label class="form-check-label" for="withoutDriver">Without Driver</label>
-                    </div>
             <div class="mb-3">
                 <label for="cabType" class="form-label">Cab Type</label>
                 <select class="form-select" id="cabType" name="cabType" required>
-                    <option value="Mini">Car</option>
-                    <option value="Sedan">Van</option>
-                    <option value="SUV">Cab</option>
+                    <option value="Mini">Mini</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
                 </select>
             </div>
-
             <input type="hidden" name="userId" value="1"> <!-- Replace with actual user ID -->
             <button type="submit" class="btn btn-custom">Book Now</button>
         </form>

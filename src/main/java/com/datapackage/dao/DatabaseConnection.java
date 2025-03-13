@@ -2,6 +2,8 @@ package com.datapackage.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
@@ -9,25 +11,12 @@ public class DatabaseConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "root";
     
-    private static Connection connection;
-
-    private DatabaseConnection() { 
-        // Private constructor to prevent instantiation
-    }
-
     public static Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {  
-            synchronized (DatabaseConnection.class) {  
-                if (connection == null || connection.isClosed()) {
-                    try {
-                        Class.forName("com.mysql.cj.jdbc.Driver");
-                        connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                    } catch (ClassNotFoundException e) {
-                        throw new SQLException("Database Driver not found", e);
-                    }
-                }
-            }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Database Driver not found", e);
         }
-        return connection;
     }
 }
