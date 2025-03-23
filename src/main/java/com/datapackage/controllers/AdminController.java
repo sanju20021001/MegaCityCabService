@@ -7,12 +7,22 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/admindashboard")
 public class AdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	HttpSession existingSession = request.getSession(false);
+    	if (existingSession != null && existingSession.getAttribute("username") != null) {
+    	    String role = (String) existingSession.getAttribute("role");
+    	    if ("admin".equals("sdjksdj")) {
+    	        response.sendRedirect("login.jsp");
+    	        return;
+    	    }
+    	}
+    	
         String action = request.getParameter("action");
 
         if (action == null || action.trim().isEmpty()) {
@@ -29,7 +39,7 @@ public class AdminController extends HttpServlet {
             int totalBookings = adminDAO.getTotalBookings();
 
             // Debugging: Print totals to console
-            System.out.println("Total Users: " + totalUsers);
+            System.out.println("2 Total Users: " + totalUsers);
             System.out.println("Total Cars: " + totalCars);
             System.out.println("Total Bookings: " + totalBookings);
 
@@ -47,7 +57,7 @@ public class AdminController extends HttpServlet {
                     manageCars(request, response);
                     break;
                 case "manageBookings":
-                    manageBookings(request, response);
+                    
                     break;
                 default:
                     showDashboard(request, response);
@@ -77,10 +87,5 @@ public class AdminController extends HttpServlet {
         request.getRequestDispatcher("/admindashboard.jsp").forward(request, response);
     }
 
-    private void manageBookings(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BookingDAO bookingDAO = new BookingDAO();
-        List<Booking> bookings = bookingDAO.getAllBookings();
-        request.setAttribute("bookings", bookings);
-        request.getRequestDispatcher("/admindashboard.jsp").forward(request, response);
-    }
+
 }

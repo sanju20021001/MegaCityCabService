@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,13 +23,14 @@ public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
+    // Database connection parameters
     private static final String DB_URL = "jdbc:mysql://localhost:3306/megacitycabdb";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "root";
 
     static {
         try {
-            // Load the MySQL JDBC driver
+            // Load MySQL JDBC driver class
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "MySQL JDBC Driver not found!", e);
@@ -43,6 +43,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
+        // Route requests based on action parameter
         if ("register".equals(action)) {
             registerUser(request, response);
         } else if ("login".equals(action)) {
@@ -59,6 +60,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
+        // Route GET requests
         if ("logout".equals(action)) {
             logoutUser(request, response);
         } else if ("delete".equals(action)) {
@@ -70,8 +72,10 @@ public class UserController extends HttpServlet {
         }
     }
 
+    // User registration method
     private void registerUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Extract parameters from request
         String name = request.getParameter("name");
         String address = request.getParameter("address");
         String nic = request.getParameter("nic");
@@ -80,7 +84,7 @@ public class UserController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // Validate input fields
+        // Basic validation
         if (name == null || name.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
             response.sendRedirect("register.jsp?error=All fields are required");
             return;
@@ -92,7 +96,7 @@ public class UserController extends HttpServlet {
         }
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            // Check if email already exists
+            // Check for existing email
             String checkSql = "SELECT email FROM users WHERE email = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
                 checkStmt.setString(1, email);
@@ -106,14 +110,14 @@ public class UserController extends HttpServlet {
             // Insert new user
             String sql = "INSERT INTO users (username, name, address, nic, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, email); // Use email as username
+                pstmt.setString(1, email);
                 pstmt.setString(2, name);
                 pstmt.setString(3, address);
                 pstmt.setString(4, nic);
                 pstmt.setString(5, email);
                 pstmt.setString(6, phone);
                 pstmt.setString(7, password);
-                pstmt.setString(8, "user"); // Default role is "user"
+                pstmt.setString(8, "user");
 
                 int rowsInserted = pstmt.executeUpdate();
                 if (rowsInserted > 0) {
@@ -128,12 +132,12 @@ public class UserController extends HttpServlet {
         }
     }
 
+    // User login method with session handling
     private void loginUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        // Validate input fields
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             response.sendRedirect("login.jsp?error=Email and password are required");
             return;
@@ -147,11 +151,12 @@ public class UserController extends HttpServlet {
 
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    HttpSession session = request.getSession();
+                    // Create session and store user information
+                    HttpSession session = request.getSession(); 
                     session.setAttribute("username", rs.getString("username"));
                     session.setAttribute("role", rs.getString("role"));
 
-                    // Redirect based on role
+                    // Redirect based on user role
                     if ("admin".equals(rs.getString("role"))) {
                         response.sendRedirect("admindashboard.jsp");
                     } else {
@@ -167,15 +172,19 @@ public class UserController extends HttpServlet {
         }
     }
 
+    // Logout method with session invalidation
     private void logoutUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Get existing session without creating new one
         HttpSession session = request.getSession(false);
         if (session != null) {
+            // Invalidate the session
             session.invalidate();
         }
         response.sendRedirect("login.jsp?success=Logged out successfully");
     }
 
+    // Method to list all users
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<User> userList = new ArrayList<>();
@@ -187,14 +196,14 @@ public class UserController extends HttpServlet {
 
                 while (rs.next()) {
                     User user = new User();
-                    user.setRegNumber(rs.getInt("regNumber")); // Fixed
-                    user.setUsername(rs.getString("username")); // Fixed
-                    user.setName(rs.getString("name")); // Fixed
-                    user.setAddress(rs.getString("address")); // Fixed
-                    user.setNic(rs.getString("nic")); // Fixed
-                    user.setEmail(rs.getString("email")); // Fixed
-                    user.setPhone(rs.getString("phone")); // Fixed
-                    user.setRole(rs.getString("role")); // Fixed
+                    user.setRegNumber(rs.getInt("regNumber"));
+                    user.setUsername(rs.getString("username"));
+                    user.setName(rs.getString("name"));
+                    user.setAddress(rs.getString("address"));
+                    user.setNic(rs.getString("nic"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setRole(rs.getString("role"));
                     userList.add(user);
                 }
             }
@@ -204,9 +213,10 @@ public class UserController extends HttpServlet {
         }
 
         request.setAttribute("userList", userList);
-        request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+        request.getRequestDispatcher("Users.jsp").forward(request, response);
     }
 
+    // User update method
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));
@@ -243,6 +253,7 @@ public class UserController extends HttpServlet {
         }
     }
 
+    // User deletion method
     private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));

@@ -1,4 +1,35 @@
+<%@page import="com.datapackage.dao.AdminDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<% 
+int totalUsers = 0;
+int totalCars = 0;
+int totalBookings = 0;
+
+HttpSession existingSession = request.getSession(false);
+if (existingSession == null || existingSession.getAttribute("username") == null || 
+    !"admin".equals(existingSession.getAttribute("role"))) {
+   
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Expires", "0");
+    response.sendRedirect("login.jsp");
+    return; 
+} else {
+    // Valid admin session, proceed to load data
+    AdminDAO adminDao = new AdminDAO();
+    try {
+        totalUsers = adminDao.getTotalUsers();
+        totalCars = adminDao.getTotalCars();
+        totalBookings = adminDao.getTotalBookings();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+  
+%>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,19 +113,19 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 sidebar">
-                <h3 class="text-center mb-4">Admin Panel</h3>
-                <ul class="nav flex-column">
-                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li><a href="Users.jsp"><i class="fas fa-users"></i> Manage Users</a></li>
-                    <li><a href="manageCar.jsp"><i class="fas fa-car"></i> Manage Cabs</a></li>
-                    <li><a href="drivers.jsp"><i class="fas fa-users"></i> Manage Drivers</a></li>
-                    <li><a href="managebooking.jsp"><i class="fas fa-list"></i>Bookings</a></li>
-                    <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
+<div class="col-md-3 col-lg-2 sidebar">
+    <h3 class="text-center mb-4">Admin Panel</h3>
+    <ul class="nav flex-column">
+        <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="Users.jsp"><i class="fas fa-users"></i> Manage Users</a></li>
+        <li><a href="manageCar.jsp"><i class="fas fa-car"></i> Manage Cabs</a></li>
+        <li><a href="drivers.jsp"><i class="fas fa-users"></i> Manage Drivers</a></li>
+        <li><a href="managebooking.jsp"><i class="fas fa-list"></i> Bookings</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+        <li><a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li> 
+    </ul>
+</div>
             
 
             <!-- Main Content -->
@@ -108,7 +139,8 @@
 					        <i class="fas fa-users mb-3"></i>
 					        <h4>Total Users</h4>
 					        <!-- Display total users dynamically -->
-					        <h2><%= request.getAttribute("totalUsers") %></h2>
+					        <!-- <h2><%= request.getAttribute("totalUsers") %></h2> -->
+					        <h2><%= totalUsers %></h2>
 					    </div>
 					</div>
 					<div class="col-md-4 mb-4">
@@ -116,7 +148,8 @@
 					        <i class="fas fa-car mb-3"></i>
 					        <h4>Total Cabs</h4>
 					        <!-- Display total cabs dynamically -->
-					        <h2><%= request.getAttribute("totalCars") %></h2>
+					        <!-- <h2><%= request.getAttribute("totalCars") %></h2> -->
+					        <h2><%= totalCars %></h2>
 					    </div>
 					</div>
 					<div class="col-md-4 mb-4">
@@ -124,7 +157,8 @@
 					        <i class="fas fa-list mb-3"></i>
 					        <h4>Total Bookings</h4>
 					        <!-- Display total bookings dynamically -->
-					        <h2><%= request.getAttribute("totalBookings") %></h2>
+					        <!-- <h2><%= request.getAttribute("totalBookings") %></h2> -->
+					        <h2><%= totalBookings %></h2>
 					    </div>
 					</div>
 
@@ -155,6 +189,14 @@
             </div>
         </div>
     </div>
+    <% 
+    String logoutMessage = request.getParameter("logout");
+    if (logoutMessage != null && logoutMessage.equals("success")) {
+%>
+    <div class="alert alert-success text-center">
+        You have been logged out successfully.
+    </div>
+<% } %>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

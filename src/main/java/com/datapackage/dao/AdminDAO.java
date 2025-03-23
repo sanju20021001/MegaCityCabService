@@ -13,17 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminDAO {
-    private Connection connection;
+	
+	public AdminDAO() {
 
-    public AdminDAO(Connection connection) {
-        this.connection = connection;
-    }
-
-
+	}
+	
+	public AdminDAO(Connection connection) {
+		
+	}
 
     // Method to get total number of cars
     public int getTotalCars() throws Exception {
         String sql = "SELECT COUNT(*) AS total FROM cars";
+        Connection connection =  DatabaseConnection.getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -38,6 +40,7 @@ public class AdminDAO {
     // Method to get total number of bookings
     public int getTotalBookings() throws Exception {
         String sql = "SELECT COUNT(*) AS total FROM bookings";
+        Connection connection =  DatabaseConnection.getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -51,6 +54,7 @@ public class AdminDAO {
     
     public int getTotalUsers() throws Exception {
         String sql = "SELECT COUNT(*) AS total FROM users";
+        Connection connection =  DatabaseConnection.getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

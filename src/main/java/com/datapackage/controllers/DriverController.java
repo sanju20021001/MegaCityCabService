@@ -34,7 +34,7 @@ public class DriverController extends HttpServlet {
                 deleteDriver(request, response);
                 break;
             default:
-                response.sendRedirect("manageDrivers.jsp");
+                response.sendRedirect("drivers.jsp");
         }
     }
 
@@ -48,7 +48,7 @@ public class DriverController extends HttpServlet {
 
         Driver newDriver = new Driver(0, name, licenseNumber, phoneNumber, email, vehicleType, status);
         driverDAO.addDriver(newDriver);
-        response.sendRedirect("manageDrivers.jsp");
+        response.sendRedirect("drivers.jsp");
     }
 
     private void updateDriver(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -62,12 +62,12 @@ public class DriverController extends HttpServlet {
 
         Driver driver = new Driver(driverID, name, licenseNumber, phoneNumber, email, vehicleType, status);
         driverDAO.updateDriver(driver);
-        response.sendRedirect("manageDrivers.jsp");
+        response.sendRedirect("drivers.jsp");
     }
 
     private void deleteDriver(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int driverID = Integer.parseInt(request.getParameter("id"));
+        int driverID = Integer.parseInt(request.getParameter("driverID"));
         driverDAO.deleteDriver(driverID);
-        response.sendRedirect("manageDrivers.jsp");
+        response.sendRedirect("drivers.jsp");
     }
 }

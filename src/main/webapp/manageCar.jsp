@@ -141,28 +141,6 @@
     <!-- Edit Modal (similar structure with pre-filled data) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Edit modal population
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.getElementById('editCarID').value = btn.dataset.carid;
-                document.getElementById('editModel').value = btn.dataset.model;
-                document.getElementById('editBrand').value = btn.dataset.brand;
-                document.getElementById('editLicense').value = btn.dataset.license;
-                document.getElementById('editPrice').value = btn.dataset.price;
-                document.getElementById('editStatus').value = btn.dataset.status;
-            });
-        });
 
-        // Client-side validation
-        function validateForm(form) {
-            const price = form.price.value;
-            if (isNaN(price) || price <= 0) {
-                alert("Please enter a valid price");
-                return false;
-            }
-            return true;
-        }
-    </script>
 </body>
 </html>

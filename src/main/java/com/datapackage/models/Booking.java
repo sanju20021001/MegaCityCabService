@@ -3,86 +3,117 @@ package com.datapackage.models;
 import java.time.LocalDateTime;
 
 public class Booking {
-    private int bookingId; // Primary key
-    private int userId;
+    private int bookingId;
     private String customerName;
     private String customerPhone;
-    private String customerEmail;
+    private String address;
     private String pickupLocation;
-    private String dropLocation;
+    private double distance;
     private LocalDateTime pickupTime;
     private String cabType;
+    private String driver;
 
-    // Getters and Setters
-    public int getBookingId() {
-        return bookingId;
-    }
+    // Default constructor
+    public Booking() {}
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
-    }
+	public Booking(String customerName, String customerPhone, String address, String pickupLocation, double distance,
+			LocalDateTime pickupTime, String cabType, String driver) {
+		super();
+		this.customerName = customerName;
+		this.customerPhone = customerPhone;
+		this.address = address;
+		this.pickupLocation = pickupLocation;
+		this.distance = distance;
+		this.pickupTime = pickupTime;
+		this.cabType = cabType;
+		this.driver = driver;
+	}
 
-    public int getUserId() {
-        return userId;
-    }
+	public Booking(int bookingId, String customerName, String customerPhone, String address, String pickupLocation,
+			double distance, LocalDateTime pickupTime, String cabType, String driver) {
+		super();
+		this.bookingId = bookingId;
+		this.customerName = customerName;
+		this.customerPhone = customerPhone;
+		this.address = address;
+		this.pickupLocation = pickupLocation;
+		this.distance = distance;
+		this.pickupTime = pickupTime;
+		this.cabType = cabType;
+		this.driver = driver;
+	}
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+	public int getBookingId() {
+		return bookingId;
+	}
 
-    public String getCustomerName() {
-        return customerName;
-    }
+	public void setBookingId(int bookingId) {
+		this.bookingId = bookingId;
+	}
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+	public String getCustomerName() {
+		return customerName;
+	}
 
-    public String getCustomerPhone() {
-        return customerPhone;
-    }
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
-    }
+	public String getCustomerPhone() {
+		return customerPhone;
+	}
 
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
+	}
 
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public String getPickupLocation() {
-        return pickupLocation;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public void setPickupLocation(String pickupLocation) {
-        this.pickupLocation = pickupLocation;
-    }
+	public String getPickupLocation() {
+		return pickupLocation;
+	}
 
-    public String getDropLocation() {
-        return dropLocation;
-    }
+	public void setPickupLocation(String pickupLocation) {
+		this.pickupLocation = pickupLocation;
+	}
 
-    public void setDropLocation(String dropLocation) {
-        this.dropLocation = dropLocation;
-    }
+	public double getDistance() {
+		return distance;
+	}
 
-    public LocalDateTime getPickupTime() {
-        return pickupTime;
-    }
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
 
-    public void setPickupTime(LocalDateTime pickupTime) {
-        this.pickupTime = pickupTime;
-    }
+	public LocalDateTime getPickupTime() {
+		return pickupTime;
+	}
 
-    public String getCabType() {
-        return cabType;
-    }
+	public void setPickupTime(LocalDateTime pickupTime) {
+		this.pickupTime = pickupTime;
+	}
 
-    public void setCabType(String cabType) {
-        this.cabType = cabType;
-    }
+	public String getCabType() {
+		return cabType;
+	}
+
+	public void setCabType(String cabType) {
+		this.cabType = cabType;
+	}
+
+	public String getDriver() {
+		return driver;
+	}
+
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+
+    
 }
