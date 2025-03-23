@@ -2,6 +2,10 @@ package com.datapackage.controllers;
 
 import com.datapackage.dao.BookingDAO;
 import com.datapackage.models.Booking;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,17 +19,20 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
 @WebServlet("/BookingController")
 public class BookingController extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String customerName = request.getParameter("customer_name");
         String address = request.getParameter("address");
         String telephoneNumber = request.getParameter("telephone_number");
         String pickupLocation = request.getParameter("pickup_location");
-        String durationStr = request.getParameter("duration");
+        double duration = Double.parseDouble(request.getParameter("duration"));
         String driverName = request.getParameter("driver_name");
         String carModel = request.getParameter("car_model");
         String orderDatetimeStr = request.getParameter("orderDatetime");
+        
+        System.out.println(customerName);
 
         // Convert String to LocalDateTime
         LocalDateTime orderDatetime = null;
@@ -35,7 +42,7 @@ public class BookingController extends HttpServlet {
         }
 
         // Calculate Bill
-        int duration = (durationStr != null && !durationStr.isEmpty()) ? Integer.parseInt(durationStr) : 0;
+//        int duration = (durationStr != null && !durationStr.isEmpty()) ? Integer.parseInt(durationStr) : 0;
         double bill = duration * 40; // Rs.40 per km
 
         // Add car price
@@ -72,7 +79,7 @@ public class BookingController extends HttpServlet {
         double finalBill = bill - discount;
 
         // Save Booking in Database
-        Booking booking = new Booking(customerName, address, telephoneNumber, pickupLocation, durationStr, orderDatetime, driverName, carModel);
+        Booking booking = new Booking(customerName, telephoneNumber, address, pickupLocation, duration, orderDatetime, carModel, driverName);
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
@@ -107,12 +114,12 @@ public class BookingController extends HttpServlet {
                 document.add(new Paragraph("Discount (20%): -Rs." + discount));
                 document.add(new Paragraph("Total Bill: Rs." + finalBill));
                 document.close();
-            } catch (DocumentException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
         } else {
-            response.sendRedirect("home.jsp?booking=error");
+//            response.sendRedirect("home.jsp?booking=error");
         }
     }
 }

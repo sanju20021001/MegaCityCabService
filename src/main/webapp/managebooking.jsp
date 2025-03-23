@@ -1,9 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List,com.datapackage.dao.BookingDAO,com.datapackage.models.Booking" %>
+<%@ page import="java.util.List, com.datapackage.dao.BookingDAO, com.datapackage.models.Booking" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<jsp:include page="header.jsp" />
 
 <%
-    BookingDAO bookingDAO = new BookingDAO();
-    List<Booking> bookingList = bookingDAO.getAllBookings();
+BookingDAO bookingDAO = new BookingDAO();
+List<Booking> bookingList = bookingDAO.getAllBookings();
+String message = request.getParameter("success") != null ? request.getParameter("success") : request.getParameter("error");
+String messageType = request.getParameter("success") != null ? "success" : "danger";
 %>
 
 <!DOCTYPE html>
@@ -11,72 +15,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Bookings - Mega City Cab</title>
+    <title>Manage Bookings</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* Add your custom styles here */
+        .alert { position: fixed; top: 20px; right: 20px; z-index: 1000; }
     </style>
 </head>
 <body>
+    <% if (message != null) { %>
+        <div class="alert alert-<%= messageType %> alert-dismissible fade show">
+            <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Alert Container for Messages -->
-        <div id="messageAlert" class="alert" style="display: none;"></div>
+    <div class="container mt-4">
+        <h2>Manage Bookings</h2>
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+            Add New Booking
+        </button>
 
-        <h2 class="text-center mb-4 animate__animated animate__fadeInDown">Manage Bookings</h2>
-
-        <!-- Bookings Table -->
-        <table id="bookingsTable" class="table animate__animated animate__fadeInUp animate-delay-1">
+        <table id="bookingsTable" class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Customer Name</th>
-                    <th>Customer Phone</th>
-                    <th>Customer Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
                     <th>Pickup Location</th>
-                    <th>Drop Location</th>
+                    <th>Distance (km)</th>
                     <th>Pickup Time</th>
                     <th>Cab Type</th>
+                    <th>Driver</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% for (Booking booking : bookingList) { %>
-                <tr id="bookingRow_<%= booking.getBookingId() %>">
+                <tr>
                     <td><%= booking.getBookingId() %></td>
                     <td><%= booking.getCustomerName() %></td>
                     <td><%= booking.getCustomerPhone() %></td>
-                    <td><%= booking.getCustomerEmail() %></td>
+                    <td><%= booking.getAddress() %></td>
                     <td><%= booking.getPickupLocation() %></td>
-                    <td><%= booking.getDropLocation() %></td>
-                    <td><%= booking.getPickupTime() %></td>
+                    <td><%= booking.getDistance() %></td>
+                    <td><%= booking.getPickupTime() != null ? booking.getPickupTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : "" %></td>
                     <td><%= booking.getCabType() %></td>
+                    <td><%= booking.getDriver() %></td>
                     <td>
-                        <button class="btn btn-warning btn-sm editBtn"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editConfirmationModal"
-                                data-id="<%= booking.getBookingId() %>"
-                                data-userid="<%= booking.getUserId() %>"
+                        <button class="btn btn-warning btn-sm edit-btn" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editBookingModal"
+                                data-bookingid="<%= booking.getBookingId() %>"
                                 data-customername="<%= booking.getCustomerName() %>"
                                 data-customerphone="<%= booking.getCustomerPhone() %>"
-                                data-customeremail="<%= booking.getCustomerEmail() %>"
-                                data-pickuplocation="<%= booking.getPickupLocation() %>"
-                                data-droplocation="<%= booking.getDropLocation() %>"
-                                data-pickuptime="<%= booking.getPickupTime().toString() %>"
-                                data-cabtype="<%= booking.getCabType() %>">
-                            <i class="fas fa-edit"></i> Edit
+                                data-address="<%= booking.getAddress() %>"
+                                data-pickup="<%= booking.getPickupLocation() %>"
+                                data-distance="<%= booking.getDistance() %>"
+                                data-pickuptime="<%= booking.getPickupTime() != null ? booking.getPickupTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : "" %>"
+                                data-cabtype="<%= booking.getCabType() %>"
+                                data-driver="<%= booking.getDriver() %>">
+                            Edit
                         </button>
-                        <button class="btn btn-danger btn-sm deleteBtn"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteConfirmationModal"
-                                data-bookingid="<%= booking.getBookingId() %>">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
+                        <a href="BookingController?action=delete&bookingId=<%= booking.getBookingId() %>" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?')">
+                            Delete
+                        </a>
                     </td>
                 </tr>
                 <% } %>
@@ -84,203 +90,184 @@
         </table>
     </div>
 
-    <!-- Edit Confirmation Modal -->
-    <div class="modal fade" id="editConfirmationModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- Add Booking Modal -->
+    <div class="modal fade" id="addBookingModal">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Edit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to edit this booking?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-warning" id="confirmEditBtn">Edit</button>
-                </div>
+                <form action="BookingController" method="POST">
+                    <input type="hidden" name="action" value="create">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Booking</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Customer Name *</label>
+                                    <input type="text" name="customer_name" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Customer Phone *</label>
+                                    <input type="tel" name="telephone_number" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address *</label>
+                                    <input type="text" name="address" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Pickup Location *</label>
+                                    <input type="text" name="pickup_location" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Distance (km) *</label>
+                                    <input type="number" step="0.1" name="duration" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Pickup Time *</label>
+                                    <input type="datetime-local" name="orderDatetime" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Cab Type *</label>
+                                    <select name="car_model" class="form-select" required>
+                                        <option value="Suzuki Alto">Suzuki Alto</option>
+                                        <option value="Suzuki Wagon R">Suzuki Wagon R</option>
+                                        <option value="Toyota Prius">Toyota Prius</option>
+                                        <option value="Honda Vessel">Honda Vessel</option>
+                                        <option value="Toyota Land Cruiser">Toyota Land Cruiser</option>
+                                        <option value="Audi A3">Audi A3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Driver Option *</label>
+                                    <select name="driver_name" class="form-select" required>
+                                        <option value="Without driver">Without driver</option>
+                                        <option value="With a driver">With a driver</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Create Booking</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <!-- Edit Booking Modal -->
-    <div class="modal fade" id="editBookingModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="editBookingModal">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Booking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editBookingForm" action="<%= request.getContextPath() %>/BookingController" method="post">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="bookingId" id="editBookingId">
-                        <input type="hidden" name="userId" id="editUserId">
-                        <div class="mb-3">
-                            <label class="form-label">Customer Name</label>
-                            <input type="text" name="customerName" id="editCustomerName" class="form-control" required>
+                <form action="BookingController" method="POST">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="booking_id" id="editBookingId">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Booking</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Customer Name *</label>
+                                    <input type="text" name="customer_name" id="editCustomerName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Customer Phone *</label>
+                                    <input type="tel" name="telephone_number" id="editCustomerPhone" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address *</label>
+                                    <input type="text" name="address" id="editAddress" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Pickup Location *</label>
+                                    <input type="text" name="pickup_location" id="editPickupLocation" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Distance (km) *</label>
+                                    <input type="number" step="0.1" name="duration" id="editDistance" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Pickup Time *</label>
+                                    <input type="datetime-local" name="orderDatetime" id="editPickupTime" class="form-control" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Customer Phone</label>
-                            <input type="text" name="customerPhone" id="editCustomerPhone" class="form-control" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Cab Type *</label>
+                                    <select name="car_model" id="editCabType" class="form-select" required>
+                                        <option value="Suzuki Alto">Suzuki Alto</option>
+                                        <option value="Suzuki Wagon R">Suzuki Wagon R</option>
+                                        <option value="Toyota Prius">Toyota Prius</option>
+                                        <option value="Honda Vessel">Honda Vessel</option>
+                                        <option value="Toyota Land Cruiser">Toyota Land Cruiser</option>
+                                        <option value="Audi A3">Audi A3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Driver Option *</label>
+                                    <select name="driver_name" id="editDriverName" class="form-select" required>
+                                        <option value="Without driver">Without driver</option>
+                                        <option value="With a driver">With a driver</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Customer Email</label>
-                            <input type="email" name="customerEmail" id="editCustomerEmail" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pickup Location</label>
-                            <input type="text" name="pickupLocation" id="editPickupLocation" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Drop Location</label>
-                            <input type="text" name="dropLocation" id="editDropLocation" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pickup Time</label>
-                            <input type="datetime-local" name="pickupTime" id="editPickupTime" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Cab Type</label>
-                            <select name="cabType" id="editCabType" class="form-control" required>
-                                <option value="Mini">Mini</option>
-                                <option value="Sedan">Sedan</option>
-                                <option value="SUV">SUV</option>
-                            </select>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Update Booking</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this booking?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#bookingsTable').DataTable();
-
-            // Variables to store booking details
-            let editBookingId, editUserId, editCustomerName, editCustomerPhone, editCustomerEmail, editPickupLocation, editDropLocation, editPickupTime, editCabType;
-
-            // Handle Edit Button Click
-            $('.editBtn').click(function () {
-                editBookingId = $(this).data('id');
-                editUserId = $(this).data('userid');
-                editCustomerName = $(this).data('customername');
-                editCustomerPhone = $(this).data('customerphone');
-                editCustomerEmail = $(this).data('customeremail');
-                editPickupLocation = $(this).data('pickuplocation');
-                editDropLocation = $(this).data('droplocation');
-                editPickupTime = $(this).data('pickuptime');
-                editCabType = $(this).data('cabtype');
+            
+            $('.edit-btn').click(function() {
+                const bookingData = $(this).data();
+                $('#editBookingId').val(bookingData.bookingid);
+                $('#editCustomerName').val(bookingData.customername);
+                $('#editCustomerPhone').val(bookingData.customerphone);
+                $('#editAddress').val(bookingData.address);
+                $('#editPickupLocation').val(bookingData.pickup);
+                $('#editDistance').val(bookingData.distance);
+                $('#editCabType').val(bookingData.cabtype);
+                $('#editDriverName').val(bookingData.driver);
+                
+                // Format datetime for the input
+                if(bookingData.pickuptime) {
+                    const dt = bookingData.pickuptime.substring(0, 16);
+                    $('#editPickupTime').val(dt);
+                }
             });
 
-            // Handle Confirm Edit Button Click
-            $('#confirmEditBtn').click(function () {
-                // Populate the edit modal with the stored booking details
-                $('#editBookingId').val(editBookingId);
-                $('#editUserId').val(editUserId);
-                $('#editCustomerName').val(editCustomerName);
-                $('#editCustomerPhone').val(editCustomerPhone);
-                $('#editCustomerEmail').val(editCustomerEmail);
-                $('#editPickupLocation').val(editPickupLocation);
-                $('#editDropLocation').val(editDropLocation);
-                $('#editPickupTime').val(editPickupTime);
-                $('#editCabType').val(editCabType);
-
-                // Close the confirmation modal
-                $('#editConfirmationModal').modal('hide');
-
-                // Open the edit modal
-                $('#editBookingModal').modal('show');
-            });
-
-            // Handle Delete Button Click
-            let deleteBookingId;
-            $('.deleteBtn').click(function () {
-                deleteBookingId = $(this).data('bookingid');
-            });
-
-            // Handle Confirm Delete Button Click
-            $('#confirmDeleteBtn').click(function () {
-                $.ajax({
-                    url: '<%= request.getContextPath() %>/BookingController',
-                    type: 'POST',
-                    data: {
-                        action: 'delete',
-                        bookingId: deleteBookingId
-                    },
-                    success: function (response) {
-                        if (response === 'success') {
-                            // Remove the row from the table
-                            $('#bookingRow_' + deleteBookingId).remove();
-
-                            // Show success message
-                            $('#messageAlert')
-                                .removeClass('alert-danger')
-                                .addClass('alert-success')
-                                .text('Booking deleted successfully!')
-                                .fadeIn();
-
-                            // Hide the message after 3 seconds
-                            setTimeout(function () {
-                                $('#messageAlert').fadeOut();
-                            }, 3000);
-                        } else {
-                            // Show error message
-                            $('#messageAlert')
-                                .removeClass('alert-success')
-                                .addClass('alert-danger')
-                                .text('Failed to delete booking.')
-                                .fadeIn();
-
-                            // Hide the message after 3 seconds
-                            setTimeout(function () {
-                                $('#messageAlert').fadeOut();
-                            }, 3000);
-                        }
-                    },
-                    error: function () {
-                        // Show error message
-                        $('#messageAlert')
-                            .removeClass('alert-success')
-                            .addClass('alert-danger')
-                            .text('An error occurred while deleting the booking.')
-                            .fadeIn();
-
-                        // Hide the message after 3 seconds
-                        setTimeout(function () {
-                            $('#messageAlert').fadeOut();
-                        }, 3000);
-                    }
-                });
-
-                // Close the confirmation modal
-                $('#deleteConfirmationModal').modal('hide');
-            });
+            setTimeout(() => {
+                $('.alert').alert('close');
+            }, 5000);
         });
     </script>
 </body>

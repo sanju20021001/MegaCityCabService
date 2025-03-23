@@ -24,7 +24,7 @@ public class AdminDAO {
 
     // Method to get total number of cars
     public int getTotalCars() throws Exception {
-        String sql = "SELECT COUNT(*) AS total FROM car";
+        String sql = "SELECT COUNT(*) AS total FROM cars";
         Connection connection =  DatabaseConnection.getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();

@@ -165,7 +165,7 @@
                         <i class="fas fa-car"></i>
                         <h3>Cars for Every Journey</h3>
                         <p>Comfortable and budget-friendly travel.</p>
-                        <a href="bookingride.jsp" class="btn">Book Now</a>
+                        <button class="btn" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -173,7 +173,7 @@
                         <i class="fas fa-taxi"></i>
                         <h3>Cabs for Quick Trips</h3>
                         <p>Spacious and premium quick rides.</p>
-                        <a href="bookingride.jsp" class="btn">Book Now</a>
+                        <button class="btn" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -181,7 +181,7 @@
                         <i class="fas fa-shuttle-van"></i>
                         <h3>Vans for Group Travel</h3>
                         <p>Elegant rides for family & friends.</p>
-                        <a href="bookingride.jsp" class="btn">Book Now</a>
+                        <button class="btn" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
                     </div>
                 </div>
             </div>
@@ -206,41 +206,18 @@
                         <i class="fas fa-wallet"></i>
                         <h3>Multiple Payment Options</h3>
                         <p>Pay via cash, card, or wallet.</p>
-                        <a href="#" class="btn">Manage Payments</a>
+                        <a href="payment.jsp" class="btn">Manage Payments</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
                         <i class="fas fa-history"></i>
-                        <h3>Ride History</h3>
+                        <h3>View Bookings</h3>
                         <p>View past rides and invoices.</p>
-                        <a href="#" class="btn">View History</a>
+                        <a href="BookingDetail.jsp" class="btn">View Bookings</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-user-edit"></i>
-                        <h3>Manage Profile</h3>
-                        <p>Update personal and payment details.</p>
-                        <a href="#" class="btn">Edit Profile</a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-headset"></i>
-                        <h3>Customer Support</h3>
-                        <p>Get assistance anytime.</p>
-                        <a href="#" class="btn">Contact Support</a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-tags"></i>
-                        <h3>Promotions</h3>
-                        <p>Apply discount codes for savings.</p>
-                        <a href="#" class="btn">View Offers</a>
-                    </div>
-                </div>
+          
             </div>
         </div>
     </section>
@@ -254,8 +231,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="bookingForm" action="<%= request.getContextPath() %>/BookingController" method="post">
-                        <input type="hidden" id="bookCarID" name="carID">
+                    <form id="bookingForm" action="<%= request.getContextPath() %>/BookingController" method="GET">
+                        <input type="hidden" id="bookCarID" name="carID" value="001">
                         <input type="hidden" id="totalBill" name="totalBill">
 
                         <div class="mb-3">
@@ -279,7 +256,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Duration (Km)</label>
+                            <label class="form-label">Distance (Km)</label>
                             <input type="number" class="form-control" id="duration" name="duration" required>
                         </div>
 
@@ -327,6 +304,11 @@
                     <p id="billDetails"></p>
                     <button type="submit" class="btn btn-success w-100" onclick="submitBooking()">Confirm & Generate Bill</button>
                 </div>
+							<button type="button" 
+			        class="btn btn-primary btn-sm" 
+			        onclick="window.location.href='payment.jsp'">
+			  Make Payment
+			</button>
             </div>
         </div>
     </div>

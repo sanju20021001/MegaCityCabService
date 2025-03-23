@@ -6,70 +6,114 @@ public class Booking {
     private int bookingId;
     private String customerName;
     private String customerPhone;
-    private String customerEmail;
+    private String address;
     private String pickupLocation;
-    private String dropLocation;
+    private double distance;
     private LocalDateTime pickupTime;
     private String cabType;
-    private String driverName;
+    private String driver;
 
     // Default constructor
     public Booking() {}
 
-    // Constructor for inserting a new booking (without bookingId)
-    public Booking(String customerName, String customerPhone, String customerEmail,
-                   String pickupLocation, String dropLocation, LocalDateTime pickupTime,
-                   String cabType, String driverName) {
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.customerEmail = customerEmail;
-        this.pickupLocation = pickupLocation;
-        this.dropLocation = dropLocation;
-        this.pickupTime = pickupTime;
-        this.cabType = cabType;
-        this.driverName = driverName;
-    }
+	public Booking(String customerName, String customerPhone, String address, String pickupLocation, double distance,
+			LocalDateTime pickupTime, String cabType, String driver) {
+		super();
+		this.customerName = customerName;
+		this.customerPhone = customerPhone;
+		this.address = address;
+		this.pickupLocation = pickupLocation;
+		this.distance = distance;
+		this.pickupTime = pickupTime;
+		this.cabType = cabType;
+		this.driver = driver;
+	}
 
-    // Constructor for fetching a booking from DB (with bookingId)
-    public Booking(int bookingId, String customerName, String customerPhone, String customerEmail,
-                   String pickupLocation, String dropLocation, LocalDateTime pickupTime,
-                   String cabType, String driverName) {
-        this.bookingId = bookingId;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.customerEmail = customerEmail;
-        this.pickupLocation = pickupLocation;
-        this.dropLocation = dropLocation;
-        this.pickupTime = pickupTime;
-        this.cabType = cabType;
-        this.driverName = driverName;
-    }
+	public Booking(int bookingId, String customerName, String customerPhone, String address, String pickupLocation,
+			double distance, LocalDateTime pickupTime, String cabType, String driver) {
+		super();
+		this.bookingId = bookingId;
+		this.customerName = customerName;
+		this.customerPhone = customerPhone;
+		this.address = address;
+		this.pickupLocation = pickupLocation;
+		this.distance = distance;
+		this.pickupTime = pickupTime;
+		this.cabType = cabType;
+		this.driver = driver;
+	}
 
-    // Getters and Setters
-    public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+	public int getBookingId() {
+		return bookingId;
+	}
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
+	public void setBookingId(int bookingId) {
+		this.bookingId = bookingId;
+	}
 
-    public String getCustomerPhone() { return customerPhone; }
-    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
+	public String getCustomerName() {
+		return customerName;
+	}
 
-    public String getCustomerEmail() { return customerEmail; }
-    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
-    public String getPickupLocation() { return pickupLocation; }
-    public void setPickupLocation(String pickupLocation) { this.pickupLocation = pickupLocation; }
+	public String getCustomerPhone() {
+		return customerPhone;
+	}
 
-    public String getDropLocation() { return dropLocation; }
-    public void setDropLocation(String dropLocation) { this.dropLocation = dropLocation; }
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
+	}
 
-    public LocalDateTime getPickupTime() { return pickupTime; }
-    public void setPickupTime(LocalDateTime pickupTime) { this.pickupTime = pickupTime; }
+	public String getAddress() {
+		return address;
+	}
 
-    public String getCabType() { return cabType; }
-    public void setCabType(String cabType) { this.cabType = cabType; }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public String getDriverName() { return driverName; }
-    public void setDriverName(String driverName) { this.driverName = driverName; }
+	public String getPickupLocation() {
+		return pickupLocation;
+	}
+
+	public void setPickupLocation(String pickupLocation) {
+		this.pickupLocation = pickupLocation;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
+	public LocalDateTime getPickupTime() {
+		return pickupTime;
+	}
+
+	public void setPickupTime(LocalDateTime pickupTime) {
+		this.pickupTime = pickupTime;
+	}
+
+	public String getCabType() {
+		return cabType;
+	}
+
+	public void setCabType(String cabType) {
+		this.cabType = cabType;
+	}
+
+	public String getDriver() {
+		return driver;
+	}
+
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+
+    
 }

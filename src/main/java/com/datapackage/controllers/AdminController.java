@@ -14,6 +14,15 @@ import java.util.List;
 public class AdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	HttpSession existingSession = request.getSession(false);
+    	if (existingSession != null && existingSession.getAttribute("username") != null) {
+    	    String role = (String) existingSession.getAttribute("role");
+    	    if ("admin".equals("sdjksdj")) {
+    	        response.sendRedirect("login.jsp");
+    	        return;
+    	    }
+    	}
+    	
         String action = request.getParameter("action");
 
         if (action == null || action.trim().isEmpty()) {
@@ -30,7 +39,7 @@ public class AdminController extends HttpServlet {
             int totalBookings = adminDAO.getTotalBookings();
 
             // Debugging: Print totals to console
-            System.out.println("Total Users: " + totalUsers);
+            System.out.println("2 Total Users: " + totalUsers);
             System.out.println("Total Cars: " + totalCars);
             System.out.println("Total Bookings: " + totalBookings);
 

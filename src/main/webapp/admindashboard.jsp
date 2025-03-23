@@ -2,18 +2,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <% 
-    AdminDAO adminDao = new AdminDAO();
-    int totalUsers = 0;
-    int totalCars = 0;
-    int totalBookings = 0;
+int totalUsers = 0;
+int totalCars = 0;
+int totalBookings = 0;
 
+HttpSession existingSession = request.getSession(false);
+if (existingSession == null || existingSession.getAttribute("username") == null || 
+    !"admin".equals(existingSession.getAttribute("role"))) {
+   
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Expires", "0");
+    response.sendRedirect("login.jsp");
+    return; 
+} else {
+    // Valid admin session, proceed to load data
+    AdminDAO adminDao = new AdminDAO();
     try {
         totalUsers = adminDao.getTotalUsers();
         totalCars = adminDao.getTotalCars();
         totalBookings = adminDao.getTotalBookings();
     } catch (Exception e) {
-        e.printStackTrace(); // Log error in server logs
+        e.printStackTrace();
     }
+}
+  
 %>
 
 
@@ -110,7 +123,7 @@
         <li><a href="managebooking.jsp"><i class="fas fa-list"></i> Bookings</a></li>
         <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
         <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-        <li><a href="login.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li> 
+        <li><a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li> 
     </ul>
 </div>
             

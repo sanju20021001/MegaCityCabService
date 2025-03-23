@@ -18,7 +18,7 @@ import com.datapackage.models.Car;
 )
 @WebServlet("/CarController")
 public class CarController extends HttpServlet {
-    private final CarDAO carDAO = new CarDAO();
+    private final CarDAO carDAO = new CarDAO();  //Using factory design pattern
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();

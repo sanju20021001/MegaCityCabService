@@ -16,13 +16,15 @@ public class BookingDAO {
 
     // Insert a new booking into the database
     public boolean insertBooking(Booking booking) {
-        String sql = "INSERT INTO booking (customer_name, customer_phone, customer_email, pickup_location, drop_location, pickup_time, cab_type, driver_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bookings (customer_name, address, customer_phone, " 
+                   + "pickup_location, distance, pickup_time, cab_type, driver) " 
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"; 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, booking.getCustomerName());
-            stmt.setString(2, booking.getCustomerPhone());
-            stmt.setString(3, booking.getCustomerEmail());
+            stmt.setString(2, booking.getAddress());
+            stmt.setString(3, booking.getCustomerPhone());
             stmt.setString(4, booking.getPickupLocation());
-            stmt.setString(5, booking.getDropLocation());
+            stmt.setDouble(5, booking.getDistance());  
 
             // Convert LocalDateTime to Timestamp for database storage
             if (booking.getPickupTime() != null) {
@@ -32,7 +34,7 @@ public class BookingDAO {
             }
 
             stmt.setString(7, booking.getCabType());
-            stmt.setString(8, booking.getDriverName());
+            stmt.setString(8, booking.getDriver());
 
             // Execute the query and return true if successful
             return stmt.executeUpdate() > 0;
@@ -46,22 +48,22 @@ public class BookingDAO {
     // Fetch all bookings from the database
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM booking ORDER BY pickup_time DESC";
+        String sql = "SELECT * FROM bookings";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Booking booking = new Booking(
-                        rs.getInt("booking_id"),
+                        rs.getInt("id"),
                         rs.getString("customer_name"),
                         rs.getString("customer_phone"),
-                        rs.getString("customer_email"),
+                        rs.getString("address"),
                         rs.getString("pickup_location"),
-                        rs.getString("drop_location"),
+                        Double.parseDouble(rs.getString("distance")),
                         rs.getTimestamp("pickup_time") != null ? rs.getTimestamp("pickup_time").toLocalDateTime() : null,
                         rs.getString("cab_type"),
-                        rs.getString("driver_name")
+                        rs.getString("driver")
                 );
                 bookings.add(booking);
             }
@@ -75,13 +77,13 @@ public class BookingDAO {
 
     // Update a booking in the database
     public boolean updateBooking(Booking booking) {
-        String sql = "UPDATE booking SET customer_name = ?, customer_phone = ?, customer_email = ?, pickup_location = ?, drop_location = ?, pickup_time = ?, cab_type = ?, driver_name = ? WHERE booking_id = ?";
+        String sql = "UPDATE booking SET customer_name = ?, customer_phone = ?, address = ?, pickup_location = ?, distance = ?, pickup_time = ?, cab_type = ?, driver = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, booking.getCustomerName());
             stmt.setString(2, booking.getCustomerPhone());
-            stmt.setString(3, booking.getCustomerEmail());
+            stmt.setString(3, booking.getAddress());
             stmt.setString(4, booking.getPickupLocation());
-            stmt.setString(5, booking.getDropLocation());
+            stmt.setDouble(5, booking.getDistance());
 
             // Convert LocalDateTime to Timestamp for database storage
             if (booking.getPickupTime() != null) {
@@ -91,7 +93,7 @@ public class BookingDAO {
             }
 
             stmt.setString(7, booking.getCabType());
-            stmt.setString(8, booking.getDriverName());
+            stmt.setString(8, booking.getDriver());
             stmt.setInt(9, booking.getBookingId());
 
             // Execute the query and return true if successful

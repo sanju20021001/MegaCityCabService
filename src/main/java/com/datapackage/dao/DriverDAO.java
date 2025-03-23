@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAO {
-    private String jdbcURL = "jdbc:mysql://localhost:3306/megacitycabdb"; // Update with your database name
-    private String jdbcUsername = "root"; // Update with your database username
-    private String jdbcPassword = "root"; // Update with your database password
+    private String jdbcURL = "jdbc:mysql://localhost:3306/megacitycabdb";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "root";
 
     private static final String SELECT_ALL_DRIVERS = "SELECT * FROM drivers";
     private static final String INSERT_DRIVER = "INSERT INTO drivers (name, license_number, phone_number, email, vehicle_type, status) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_DRIVER = "UPDATE drivers SET name=?, license_number=?, phone_number=?, email=?, vehicle_type=?, status=? WHERE driver_id=?";
-    private static final String DELETE_DRIVER = "DELETE FROM drivers WHERE driver_id=?";
+    private static final String UPDATE_DRIVER = "UPDATE drivers SET name=?, license_number=?, phone_number=?, email=?, vehicle_type=?, status=? WHERE id=?";
+    private static final String DELETE_DRIVER = "DELETE FROM drivers WHERE id=?";
 
     protected Connection getConnection() {
         Connection connection = null;
@@ -30,7 +30,6 @@ public class DriverDAO {
         return connection;
     }
 
-    // Fetch all drivers
     public List<Driver> getAllDrivers() {
         List<Driver> drivers = new ArrayList<>();
         try (Connection connection = getConnection();
@@ -38,7 +37,7 @@ public class DriverDAO {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                int driverID = rs.getInt("driver_id");
+                int driverID = rs.getInt("id");
                 String name = rs.getString("name");
                 String licenseNumber = rs.getString("license_number");
                 String phoneNumber = rs.getString("phone_number");
@@ -53,7 +52,6 @@ public class DriverDAO {
         return drivers;
     }
 
-    // Add a new driver
     public void addDriver(Driver driver) {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DRIVER)) {
@@ -69,7 +67,6 @@ public class DriverDAO {
         }
     }
 
-    // Update a driver
     public void updateDriver(Driver driver) {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DRIVER)) {
@@ -86,7 +83,6 @@ public class DriverDAO {
         }
     }
 
-    // Delete a driver
     public void deleteDriver(int driverID) {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_DRIVER)) {
